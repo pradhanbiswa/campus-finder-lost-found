@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f5f5ef">
+    <meta name="description" content="A thoughtful campus lost and found board that suggests possible item matches.">
+    <title>Campus Finder — Lost &amp; Found</title>
+    <link rel="stylesheet" href="/styles.css">
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="/" aria-label="Campus Finder home">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 40 40" fill="none">
+              <path d="M20 4.5 34 10v9.2c0 8.3-5.2 13.3-14 16.3C11.2 32.5 6 27.5 6 19.2V10L20 4.5Z" fill="currentColor" opacity=".14"/>
+              <path d="M20 4.5 34 10v9.2c0 8.3-5.2 13.3-14 16.3C11.2 32.5 6 27.5 6 19.2V10L20 4.5Z" stroke="currentColor" stroke-width="1.8"/>
+              <circle cx="19" cy="18" r="5.2" stroke="currentColor" stroke-width="1.8"/>
+              <path d="m23 22 4.2 4.2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M13 11.5h2M25 11.5h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </span>
+          <span class="brand-copy"><strong>Campus Finder</strong><small>Lost &amp; Found</small></span>
+        </a>
+        <div class="topbar-right">
+          <span id="ai-status" class="ai-status">
+            <span class="status-dot"></span><span class="status-label">Checking matcher…</span>
+          </span>
+          <button class="button button-primary button-small" data-action="open-post">
+            <span aria-hidden="true">＋</span> Post an item
+          </button>
+        </div>
+      </header>
+
+      <main>
+        <section class="hero">
+          <div class="hero-copy">
+            <p class="eyebrow"><span class="eyebrow-line"></span> A LITTLE CAMPUS KINDNESS</p>
+            <h1>Lost something?<br><span>Let’s look together.</span></h1>
+            <p class="hero-description">Describe what went missing or what you found. Campus Finder spots possible matches and gives people a safe way to reconnect.</p>
+            <div class="hero-actions">
+              <button class="button button-primary" data-action="scroll-board">Browse the board <span aria-hidden="true">↓</span></button>
+              <button class="button button-quiet" data-action="open-post">Share a find <span aria-hidden="true">↗</span></button>
+            </div>
+            <p class="hero-footnote"><span class="sparkle" aria-hidden="true">✳</span> A match is a helpful lead, never proof of ownership.</p>
+          </div>
+          <div class="hero-art" aria-hidden="true">
+            <div class="art-orbit orbit-one"></div><div class="art-orbit orbit-two"></div>
+            <div class="art-sun"></div>
+            <div class="art-card art-card-back">
+              <span class="art-card-icon art-icon-blue">▱</span>
+              <span class="art-card-lines"><i></i><i></i></span>
+            </div>
+            <div class="art-card art-card-front">
+              <span class="art-card-icon art-icon-yellow">✳</span>
+              <span class="art-card-lines"><i></i><i></i></span>
+              <span class="art-card-label">A small thing,<br>a big relief.</span>
+            </div>
+            <div class="art-tag"><span>FOUND</span><b>together</b></div>
+            <span class="art-star star-a">✳</span><span class="art-star star-b">✳</span>
+          </div>
+        </section>
+
+        <section class="board-section" id="board">
+          <div class="section-heading">
+            <div><p class="eyebrow eyebrow-muted">THE CAMPUS BOARD</p><h2>Recent reports <span class="heading-count" id="active-count">—</span></h2></div>
+            <button class="text-button" data-action="reset-demo" title="Restore the sample listings">Reset sample board <span aria-hidden="true">↻</span></button>
+          </div>
+          <div class="board-toolbar">
+            <label class="search-box">
+              <span class="search-icon" aria-hidden="true">⌕</span>
+              <span class="sr-only">Search item reports</span>
+              <input id="search-input" type="search" placeholder="Search items, details, or places…" autocomplete="off">
+              <kbd>⌘ K</kbd>
+            </label>
+            <div class="filter-group" role="group" aria-label="Filter reports">
+              <button class="filter-button is-active" data-filter="all" aria-pressed="true">Everything</button>
+              <button class="filter-button" data-filter="lost" aria-pressed="false"><span class="filter-dot lost-dot"></span> Lost</button>
+              <button class="filter-button" data-filter="found" aria-pressed="false"><span class="filter-dot found-dot"></span> Found</button>
+            </div>
+            <label class="select-wrap">
+              <span class="sr-only">Filter by category</span>
+              <select id="category-filter">
+                <option value="all">All categories</option><option>Accessories</option><option>Bags</option>
+                <option>Books &amp; notes</option><option>Clothing</option><option>Electronics</option>
+                <option>ID &amp; cards</option><option>Keys</option><option>Water bottles</option><option>Other</option>
+              </select><span aria-hidden="true">⌄</span>
+            </label>
+          </div>
+          <div id="item-grid" class="item-grid" aria-live="polite"></div>
+          <div id="empty-state" class="empty-state" hidden>
+            <div class="empty-icon" aria-hidden="true">⌕</div><h3>No reports found</h3>
+            <p>Try a different search, or be the first to post an item.</p>
+            <button class="button button-primary button-small" data-action="open-post">Post an item</button>
+          </div>
+          <div id="load-error" class="load-error" hidden></div>
+        </section>
+
+        <section class="how-section">
+          <div class="how-intro">
+            <p class="eyebrow eyebrow-muted">THOUGHTFUL BY DESIGN</p>
+            <h2>Good clues.<br><span>Better reunions.</span></h2>
+            <p>Descriptions help a lot. Keep one identifying detail private so the right owner can confirm it.</p>
+          </div>
+          <div class="how-steps">
+            <article class="how-step"><span class="step-number">01</span><div><h3>Share the basics</h3><p>What it is, where it was last seen, and a few details that make it yours.</p></div></article>
+            <article class="how-step"><span class="step-number">02</span><div><h3>Check possible matches</h3><p>The matcher compares descriptions, colors, places, and dates to surface promising leads.</p></div></article>
+            <article class="how-step"><span class="step-number">03</span><div><h3>Verify in person</h3><p>Use a private detail to confirm the item, then arrange a handoff through campus staff.</p></div></article>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <a class="brand brand-footer" href="/"><span class="brand-mark" aria-hidden="true">⌖</span>
+          <span class="brand-copy"><strong>Campus Finder</strong><small>Made for good reunions.</small></span>
+        </a>
+        <p>Be kind. Keep personal details private.</p><span class="footer-note">A campus community demo</span>
+      </footer>
+    </div>
+
+    <dialog id="post-dialog" class="dialog">
+      <form id="post-form" class="dialog-panel">
+        <div class="dialog-heading">
+          <div><p class="eyebrow eyebrow-muted">ADD TO THE BOARD</p><h2>Help it find its person.</h2></div>
+          <button type="button" class="icon-button" data-action="close-post" aria-label="Close form">×</button>
+        </div>
+        <p class="dialog-lead">A few useful details can make the right match much easier to spot.</p>
+        <div class="form-kind-switch" role="group" aria-label="Report type">
+          <label><input type="radio" name="kind" value="lost" checked><span>⌕ &nbsp; I lost something</span></label>
+          <label><input type="radio" name="kind" value="found"><span>✳ &nbsp; I found something</span></label>
+        </div>
+        <div class="form-grid">
+          <label class="field field-wide"><span>What is the item? <b>*</b></span><input name="name" required maxlength="90" placeholder="e.g. Wireless earbuds"></label>
+          <label class="field"><span>Category <b>*</b></span>
+            <select name="category" required>
+              <option value="" disabled selected>Choose one</option><option>Accessories</option><option>Bags</option>
+              <option>Books &amp; notes</option><option>Clothing</option><option>Electronics</option>
+              <option>ID &amp; cards</option><option>Keys</option><option>Water bottles</option><option>Other</option>
+            </select>
+          </label>
+          <label class="field"><span>Color</span><input name="color" maxlength="50" placeholder="e.g. Forest green"></label>
+          <label class="field"><span>Where? <b>*</b></span><input name="location" required maxlength="100" placeholder="Building, room, or area"></label>
+          <label class="field"><span>Date <b>*</b></span><input name="item_date" type="date" required></label>
+          <label class="field field-wide"><span>Helpful details <b>*</b></span>
+            <textarea name="description" required maxlength="500" rows="3" placeholder="A sticker, scratch, case, keychain, or other detail…"></textarea>
+            <small>Leave one private detail out so the owner can verify the item.</small>
+          </label>
+        </div>
+        <p id="form-error" class="form-error" role="alert" hidden></p>
+        <div class="dialog-actions">
+          <button type="button" class="button button-quiet" data-action="close-post">Cancel</button>
+          <button type="submit" class="button button-primary" id="submit-item">Post report <span aria-hidden="true">↗</span></button>
+        </div>
+        <p class="privacy-note"><span aria-hidden="true">✳</span> Please don’t include phone numbers, student ID numbers, or other private information.</p>
+      </form>
+    </dialog>
+
+    <dialog id="match-dialog" class="dialog">
+      <div class="dialog-panel match-dialog-panel">
+        <div class="dialog-heading">
+          <div><p class="eyebrow eyebrow-muted">POSSIBLE REUNIONS</p><h2 id="match-title">Looking for clues…</h2></div>
+          <button type="button" class="icon-button" data-action="close-matches" aria-label="Close matches">×</button>
+        </div>
+        <p class="dialog-lead" id="match-subtitle">Comparing item details, dates, and places.</p>
+        <div id="match-results" class="match-results" aria-live="polite"></div>
+        <div id="match-footer" class="match-footer" hidden>
+          <div class="match-safety"><span aria-hidden="true">✳</span><p><strong>Check before you claim.</strong> A score is only a clue. Verify one private detail and arrange the handoff through campus staff.</p></div>
+        </div>
+      </div>
+    </dialog>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>
